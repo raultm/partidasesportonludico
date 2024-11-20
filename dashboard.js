@@ -30,7 +30,7 @@ function pintarTabla(data) {
     
     new gridjs.Grid({
         columns: [
-            {id: 'id', width: "120px",name: 'ID'}, 
+            {id: 'id', hidden:true, width: "120px",name: 'ID'}, 
             {id: 'date',width: "140px",name: 'Fecha'}, 
             //{id: 'recorder',name: 'Registrada por'}, 
             {id: 'game',name: 'Juego'}, 
