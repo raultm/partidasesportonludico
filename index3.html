@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esporton Ludico</title>
+    <meta name="description" content="Home App">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-startup-image" href="icon.png">
+    <link rel="stylesheet" type="text/css" href="style.css"> 
+    <link rel="manifest" href="manifest.json">
+    <script src="sw_functions.js"></script>
+    <script src="sql.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Estadísticas de Juegos</h1>
+    <div id="stats">
+        <p><strong>Juegos más jugados en 2024:</strong></p>
+        <ul id="games-list"></ul>
+        <canvas id="gamesChart" width="400" height="200"></canvas>
+        
+    </div>
+
+    <!-- <script type="module" src="app.js"></script> -->
+
+    <script>
+        var db;
+        var xhr = new XMLHttpRequest();
+        // For example: https://github.com/lerocha/chinook-database/raw/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite
+        xhr.open('GET', 'partidas.sqlite', true);
+        xhr.responseType = 'arraybuffer';
+
+        xhr.onload = e => {
+            var uInt8Array = new Uint8Array(xhr.response);
+            db = new SQL.Database(uInt8Array);
+            obtenerPartidas()
+        };
+        xhr.send();
+
+        function obtenerPartidas()
+        {
+            let contents = execSQL("SELECT * FROM partidas", (content) => {
+                console.log(content);
+                let juegosCount = content[0].values
+                .filter(partida => partida[1].startsWith("2024"))
+                .reduce((acc, partida) => {
+                    acc[partida[2]] = (acc[partida[2]] || 0) + 1;
+                    return acc;
+                }, {})
+
+                console.log(juegosCount);
+                const sortJuegos = Object.entries(juegosCount)
+                    .map(([name, count]) => ({ name, count }))
+                    .sort((a, b) => b.count - a.count)
+                    .slice(0, 25)
+
+                let show = [{
+                    columns: ["Juego", "Cantidad"],
+                    values: sortJuegos
+                }]
+                console.log(show)
+                showContent(show)
+                
+
+//                 const ctx = document.getElementById('gamesChart').getContext('2d');
+// const chartData = sortJuegos.map(j => j.count);
+// const chartLabels = sortJuegos.map(j => j.name);
+
+// new Chart(ctx, {
+//     type: 'bar',
+//     data: {
+//         labels: chartLabels,
+//         datasets: [{
+//             label: 'Cantidad de Juegos',
+//             data: chartData,
+//             backgroundColor: 'rgba(75, 192, 192, 0.2)',
+//             borderColor: 'rgba(75, 192, 192, 1)',
+//             borderWidth: 1
+//         }]
+//     },
+//     options: {
+//         responsive: true,
+//         scales: {
+//             y: { beginAtZero: true }
+//         }
+//     }
+// });
+            })
+            
+        }
+
+        function execSQL(sql, showContent)
+        {
+            if(!db ){ console.log("Database not loaded yet"); return; }
+            var list = document.getElementById("games-list")
+            list.innerHTML = "<li>Consultando...</li>"
+            console.time("exec: " + sql);
+            var contents = db.exec(sql);
+            console.timeEnd("exec: " + sql);
+            showContent(contents)
+            return contents
+        }
+
+        function showContent(content)
+        {
+            var list = document.getElementById("games-list")
+            list.innerHTML = ""
+            content.forEach(element => {
+                element.values.forEach( element => {
+                    var li = document.createElement('li');
+                    list.appendChild(li);
+                    li.innerHTML += element.count + " - " + element.name;
+                })
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esportón Lúdico - Partidas</title>
+    <link rel="icon" type="image/png" sizes="512x512" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-startup-image" href="icon.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet"/>
+    <script src="sql.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Esportón Lúdico</h1>
+        <button id="toggle-view">Explorar Partidas</button>
+    </header>
+    <main class="dashboard">
+        <div id="leaders" style="display: block;">
+            <section class="dashboard-section">
+                <h2>Últimos tres meses</h2>
+                <div class="cards">
+                    <div class="card leaderboard">
+                        <h3>Juegos con más partidas</h3>
+                        <ul id="last-three-months-games" class="leaderboard-list"></ul>
+                    </div>
+                </div>
+                <br>
+                <div class="cards">
+                    <div class="card leaderboard">
+                        <h3>Usuarios más activos</h3>
+                        <ul id="last-three-months-users" class="leaderboard-list"></ul>
+                    </div>
+                    <div class="card leaderboard">
+                        <h3>Lugares habituales</h3>
+                        <ul id="last-three-months-locations" class="leaderboard-list"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dashboard-section">
+                <h2>Durante el año 2024</h2>
+                <div class="cards">
+
+                    <div class="card leaderboard">
+                        <h3>Juegos con más partidas</h3>
+                        <ul id="year-games" class="leaderboard-list"></ul>
+                    </div>
+                </div>
+                <br>
+                <div class="cards">
+                    <div class="card leaderboard">
+                        <h3>Usuarios más activos</h3>
+                        <ul id="year-users" class="leaderboard-list"></ul>
+                    </div>
+                    <div class="card leaderboard">
+                        <h3>Lugares habituales</h3>
+                        <ul id="year-locations" class="leaderboard-list"></ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div id="games" style="display: none;">
+            <div id="wrapper"></div>
+
+    
+    
+            
+        </div>
+
+       
+    </main>
+
+    
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+
+</html>
