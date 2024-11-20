@@ -206,3 +206,63 @@ footer a:hover {
     box-shadow: 0 0 10px rgba(72, 239, 128, 0.8); /* Efecto de enfoque */
   }
   
+  @media (max-width: 768px) {
+    /* Oculta la tabla original */
+    .gridjs-container table {
+      display: block;
+      border: none; /* Quita bordes molestos */
+    }
+  
+    /* Oculta los encabezados de tabla */
+    .gridjs-container thead {
+      display: none;
+    }
+  
+    /* Aplica estilo de tarjetas a cada fila */
+    .gridjs-container tr {
+      display: block;
+      margin-bottom: 15px; /* Espacio entre tarjetas */
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 15px;
+      background-color: #ffffff; /* Fondo blanco */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+  
+    /* Efecto hover en las tarjetas */
+    .gridjs-container tr:hover {
+      transform: translateY(-4px); /* Efecto de flotación */
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Sombra más fuerte */
+    }
+  
+    /* Apila las celdas */
+    .gridjs-container td {
+      display: block;
+      padding: 10px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #f0f0f0; /* Línea divisoria entre celdas */
+    }
+  
+    /* Última celda sin borde */
+    .gridjs-container td:last-child {
+      border-bottom: none;
+    }
+  
+    /* Muestra el nombre de la columna como etiqueta */
+    .gridjs-container td::before {
+      content: attr(data-column); /* Etiqueta de la columna */
+      font-weight: bold;
+      color: #424242;
+      display: inline-block;
+      margin-right: 10px;
+      text-transform: capitalize;
+    }
+  
+    /* Ajusta el diseño general */
+    .gridjs-container {
+      padding: 10px;
+      background-color: #f9f9f9; /* Fondo general para destacar tarjetas */
+    }
+  }
+  
