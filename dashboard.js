@@ -16,8 +16,8 @@ xhr.onload = async e => {
     renderList(lastThreeMonthsUsers, data.lastThreeMonths.users, "cambiarImagenJugador")
     renderList(lastThreeMonthsLocations, data.lastThreeMonths.locations, "cambiarImagenLugar")
     renderList(yearGames, data.year.games)
-    renderList(yearUsers, data.year.users,"cambiarImagenJugador")
-    renderList(yearLocations, data.year.locations,"cambiarImagenLugar")
+    renderList(yearUsers, data.year.users, "cambiarImagenJugador")
+    renderList(yearLocations, data.year.locations, "cambiarImagenLugar")
 
     const dataExplorer = data.tabla; //await fetchExplorerData();
     pintarTabla(dataExplorer)
@@ -27,22 +27,25 @@ xhr.send();
 function pintarTabla(data) {
     // console.log("pintarTabla", data)
     // return
-    
+    data = data.sort((a, b) => b.date.localeCompare(a.date));
     new gridjs.Grid({
         columns: [
-            {id: 'id', hidden:true, width: "120px",name: 'ID'}, 
-            {id: 'date',width: "140px",name: 'Fecha'}, 
-            //{id: 'recorder',name: 'Registrada por'}, 
-            {id: 'game',name: 'Juego'}, 
-            {id: 'location',name: 'Lugar'}, 
-            {id: 'players', name: 'Jugadores', data: (row) => row.players.map(player => player.username == "" ? player.name : player.username).join(", ")}
+            { id: 'id', width: "120px", name: 'ID' },
+            { id: 'date', width: "140px", name: 'Fecha' },
+            { id: 'recorder', name: 'Registrada por' },
+            { id: 'game', name: 'Juego' },
+            { id: 'location', name: 'Lugar' },
+            { id: 'players', name: 'Jugadores', data: (row) => row.players.map(player => player.username == "" ? player.name : player.username).join(", ") }
         ],
         fixedHeader: true,
         pagination: true,
         search: true,
         sort: true,
+        events: {
+            "gridjs:init": (grid) => { grid.sort(0, "desc") }
+        },
         data: data,
-    }).render(document.getElementById("wrapper"));
+        }).render(document.getElementById("wrapper"));
 }
 
 const toggleButton = document.getElementById("toggle-view");
@@ -50,14 +53,14 @@ const leadersSection = document.getElementById("leaders");
 const gamesSection = document.getElementById("games");
 
 toggleButton.addEventListener("click", () => {
-  // Alterna entre visible y oculto
-  const isLeadersVisible = leadersSection.style.display === "block";
+    // Alterna entre visible y oculto
+    const isLeadersVisible = leadersSection.style.display === "block";
 
-  leadersSection.style.display = isLeadersVisible ? "none" : "block";
-  gamesSection.style.display = isLeadersVisible ? "block" : "none";
+    leadersSection.style.display = isLeadersVisible ? "none" : "block";
+    gamesSection.style.display = isLeadersVisible ? "block" : "none";
 
-  // Cambia el texto del botón
-  toggleButton.textContent = isLeadersVisible ? "Clasificaciones" : "Explorar Partidas";
+    // Cambia el texto del botón
+    toggleButton.textContent = isLeadersVisible ? "Clasificaciones" : "Explorar Partidas";
 });
 
 function execSQL(sql) {
@@ -89,7 +92,7 @@ async function fetchDashboardData() {
                     return acc;
                 }, {})),
             users: top5(partidasUltimos3Meses
-                .map(partidaBGG => parsePlay(partidaBGG[1],JSON.parse(partidaBGG[4])))
+                .map(partidaBGG => parsePlay(partidaBGG[1], JSON.parse(partidaBGG[4])))
                 .reduce((acc, partida) => {
                     partida.players.map(player => {
                         let name = player.id != '0' ? player.username : player.name
@@ -99,12 +102,12 @@ async function fetchDashboardData() {
                 }, {})
             ),
             locations: top5(partidasUltimos3Meses
-                    .map(partidaBGG => parsePlay(partidaBGG[1], JSON.parse(partidaBGG[4])))
-                    .reduce((acc, partida) => {
-                        let name = partida.location
-                        acc[name] = (acc[name] || 0) + 1;
-                        return acc;
-                    }, {})
+                .map(partidaBGG => parsePlay(partidaBGG[1], JSON.parse(partidaBGG[4])))
+                .reduce((acc, partida) => {
+                    let name = partida.location
+                    acc[name] = (acc[name] || 0) + 1;
+                    return acc;
+                }, {})
             )
 
         },
@@ -125,12 +128,12 @@ async function fetchDashboardData() {
                 }, {})
             ),
             locations: top5(partidas
-                    .map(partidaBGG => parsePlay(partidaBGG[1], JSON.parse(partidaBGG[4])))
-                    .reduce((acc, partida) => {
-                        let name = partida.location
-                        acc[name] = (acc[name] || 0) + 1;
-                        return acc;
-                    }, {})
+                .map(partidaBGG => parsePlay(partidaBGG[1], JSON.parse(partidaBGG[4])))
+                .reduce((acc, partida) => {
+                    let name = partida.location
+                    acc[name] = (acc[name] || 0) + 1;
+                    return acc;
+                }, {})
             )
 
         },
@@ -200,7 +203,7 @@ function cambiarImagenLugar(imgElement) {
 function parsePlay(recorder, playBggFormat) {
     console.log(playBggFormat)
     return {
-        id: playBggFormat["_attributes"].id??0,
+        id: playBggFormat["_attributes"].id ?? 0,
         date: playBggFormat["_attributes"].date,
         game: playBggFormat.item["_attributes"].name,
         location: playBggFormat["_attributes"].location,
